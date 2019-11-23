@@ -14,7 +14,8 @@ $('#userForm').on('submit',function() {
     })
     return false;
 });
-$('#avatar').on('change',function() {
+
+$('#modifyBox').on('change','#avatar',function() {
     var formData = new FormData();
     formData.append('avatar',this.files[0]);
     $.ajax({
@@ -40,8 +41,34 @@ $.ajax({
         var html = template('userTpl',{
             data: response
         })
-        $("#tbodybox").html(html);
-        
-        
+        $("#tbodybox").html(html);      
     }
+})
+
+$("#tbodybox").on('click','.edit',function() {
+    var id = $(this).attr('data-id');
+    $.ajax({
+        type: 'get',
+        url: '/users/' + id,
+        success: function(response) {
+            // console.log(response);
+            var html = template('modifyTpl',response)
+            // console.log(html);
+            $('#modifyBox').html(html)
+        }
+    })
+})
+
+$('#modifyBox').on('submit','#modifyForm',function() {
+    var formData = $(this).serialize();
+    var id = $(this).attr('data-id');
+    $.ajax({
+        type: 'put',
+        url: '/users/' + id,
+        data: formData,
+        success: function(response) {
+            console.log(response);
+            
+        }
+    })
 })
